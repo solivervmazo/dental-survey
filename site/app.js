@@ -1,4 +1,6 @@
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "./config.js";
+import qrcode from "./assets/qrcode.js";
+import { translate } from "./i18n.js";
 
 const roles = [
   ["owner", "Clinic owner or manager"],
@@ -43,7 +45,89 @@ const errorBox = document.getElementById("survey-error");
 const stepLabel = document.getElementById("step-label");
 const progressLabel = document.getElementById("progress-label");
 const progressFill = document.getElementById("progress-fill");
-const state = { role: null, current: "role", selected: null, answers: {}, history: [], status: "completed" };
+const state = { role: null, current: "role", selected: null, answers: {}, history: [], status: "completed", language: localStorage.getItem("survey-language") === "tl" ? "tl" : "en" };
+const publicUrl = new URL(window.location.href);
+publicUrl.search = "";
+publicUrl.hash = "";
+const shareUrl = publicUrl.href;
+const t = value => translate(value, state.language);
+
+function updateStaticLanguage() {
+  document.documentElement.lang = state.language === "tl" ? "fil" : "en";
+  document.title = t("Dental Clinic Scheduling Research");
+  document.querySelectorAll("[data-i18n]").forEach(node => {
+    node.dataset.english ||= node.textContent;
+    node.textContent = t(node.dataset.english);
+  });
+}
+
+function drawQr(container) {
+  const qr = qrcode(0, "M");
+  qr.addData(shareUrl);
+  qr.make();
+  container.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+  container.setAttribute("aria-label", t("Scan to open the questionnaire"));
+}
+
+async function copyShareLink(status) {
+  try {
+    await navigator.clipboard.writeText(shareUrl);
+    status.textContent = t("Link copied");
+  } catch {
+    status.textContent = t("Could not copy the link. Please select and copy it manually.");
+  }
+}
+
+function languageControl() {
+  const control = element("div", "language-control");
+  control.setAttribute("role", "group");
+  control.setAttribute("aria-label", "Language / Wika");
+  [["en", "English"], ["tl", "Tagalog"]].forEach(([code, label]) => {
+    const item = element("button", "language-option", label);
+    item.type = "button";
+    item.setAttribute("aria-pressed", String(state.language === code));
+    item.addEventListener("click", () => {
+      state.language = code;
+      localStorage.setItem("survey-language", code);
+      updateStaticLanguage();
+      render();
+    });
+    control.append(item);
+  });
+  return control;
+}
+
+function finalQuestion(label, placeholder, key) {
+  const wrapper = element("label", "text-question");
+  wrapper.append(element("span", "", t(label)));
+  const input = element("textarea", "text-answer");
+  input.rows = 3;
+  input.maxLength = 500;
+  input.placeholder = t(placeholder);
+  input.value = state.answers[key] || "";
+  input.addEventListener("input", () => {
+    const answer = input.value.trim();
+    if (answer) state.answers[key] = answer;
+    else delete state.answers[key];
+  });
+  wrapper.append(input);
+  return wrapper;
+}
+
+function completionShare() {
+  const box = element("div", "completion-share");
+  box.append(element("p", "", t("If you know another dentist or clinic, please share this questionnaire with them.")));
+  const row = element("div", "completion-share-row");
+  const qr = element("div", "qr-code qr-small");
+  drawQr(qr);
+  const linkArea = element("div", "completion-share-link");
+  linkArea.append(element("span", "share-url", shareUrl));
+  const status = element("span", "copy-status");
+  linkArea.append(button(t("Copy link"), "btn-secondary", () => copyShareLink(status)), status);
+  row.append(qr, linkArea);
+  box.append(row);
+  return box;
+}
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -84,14 +168,17 @@ function choices(options, selectedValue, onSelect) {
 
 function render() {
   clear();
+  updateStaticLanguage();
+  document.body.classList.toggle("survey-start", state.current === "role");
+  actions.append(languageControl());
   if (state.current === "role") {
-    stepLabel.textContent = "START HERE";
-    progressLabel.textContent = "About 3 minutes";
+    stepLabel.textContent = t("START HERE");
+    progressLabel.textContent = t("About 3 minutes");
     progressFill.style.width = "5%";
-    content.append(element("h2", "", "Please select your role"));
-    content.append(element("p", "question-hint", "We’ll show questions relevant to your work."));
-    content.append(choices(roles, state.selected, value => { state.selected = value; render(); }));
-    actions.append(button("Continue", "btn-primary", () => {
+    content.append(element("h2", "", t("Please select your role")));
+    content.append(element("p", "question-hint", t("We’ll show questions relevant to your work.")));
+    content.append(choices(roles.map(([value, label]) => [value, t(label)]), state.selected, value => { state.selected = value; render(); }));
+    actions.append(button(t("Continue"), "btn-primary", () => {
       state.role = state.selected;
       state.history.push("role");
       state.current = firstByRole[state.role];
@@ -102,36 +189,49 @@ function render() {
   }
 
   if (state.current === "end") {
-    stepLabel.textContent = "LAST STEP";
-    progressLabel.textContent = "Ready to submit";
-    progressFill.style.width = "100%";
-    content.append(element("div", "success-icon", "✓"));
-    content.append(element("h2", "", "Thank you for your time"));
-    content.append(element("p", "completion-copy", "Your answers will help us understand how dentist duty is arranged today. Select Submit responses to send them."));
-    actions.append(button("Back", "btn-secondary", goBack));
-    actions.append(button("Submit responses", "btn-primary", submit));
+    const screenedOut = state.status === "screened_out";
+    stepLabel.textContent = t(screenedOut ? "LAST STEP" : "SURVEY COMPLETE");
+    progressLabel.textContent = t("Ready to submit");
+    progressFill.style.width = "96%";
+    content.append(element("h2", "", t("Thank you for your time")));
+    content.append(element("p", "completion-copy", t(screenedOut
+      ? "These duty questions do not apply to your recent experience. If you wish, you can share another day-to-day problem below."
+      : "Your answers will help us understand how dentist duty is arranged today.")));
+    if (screenedOut) {
+      const problems = {
+        owner: ["What day-to-day problem in running your clinic would you most like to solve?", "What kind of application do you wish your clinic had to solve it?"],
+        receptionist: ["What day-to-day problem at the front desk would you most like to solve?", "What kind of application would help you with it?"],
+        dentist: ["What day-to-day problem in your practice would you most like to solve?", "What kind of application would help you with that problem?"],
+      };
+      content.append(finalQuestion(problems[state.role][0], "Describe the problem, if any", "daily_problem"));
+      content.append(finalQuestion(problems[state.role][1], "Describe the app you wish existed", "app_wish"));
+      content.append(element("p", "question-hint final-hint", t("Both questions are optional. Please do not include patient information.")));
+    }
+    actions.append(button(t("Back"), "btn-secondary", goBack));
+    actions.append(button(t("Submit responses"), "btn-primary", submit));
     return;
   }
 
   if (state.current === "done") {
-    stepLabel.textContent = "COMPLETE";
-    progressLabel.textContent = "Responses submitted";
+    stepLabel.textContent = t("COMPLETE");
+    progressLabel.textContent = t("Responses submitted");
     progressFill.style.width = "100%";
     content.append(element("div", "success-icon", "✓"));
-    content.append(element("h2", "", "Responses received"));
-    content.append(element("p", "completion-copy", "Thank you for sharing your experience."));
+    content.append(element("h2", "", t("Responses received")));
+    content.append(element("p", "completion-copy", t("Thank you for sharing your experience.")));
+    content.append(completionShare());
     return;
   }
 
   const question = questions[state.current];
-  stepLabel.textContent = "QUESTIONNAIRE";
-  progressLabel.textContent = `Question ${state.history.length}`;
+  stepLabel.textContent = t("QUESTIONNAIRE");
+  progressLabel.textContent = `${t("Question")} ${state.history.length}`;
   progressFill.style.width = `${Math.min(89, 12 + (state.history.length / 9) * 77)}%`;
-  content.append(element("h2", "", question.text));
-  content.append(element("p", "question-hint", "Select one answer."));
-  content.append(choices(question.options.map(option => [option, option]), state.selected, value => { state.selected = value; render(); }));
-  actions.append(button("Back", "btn-secondary", goBack));
-  actions.append(button("Continue", "btn-primary", () => {
+  content.append(element("h2", "", t(question.text)));
+  content.append(element("p", "question-hint", t("Select one answer.")));
+  content.append(choices(question.options.map(option => [option, t(option)]), state.selected, value => { state.selected = value; render(); }));
+  actions.append(button(t("Back"), "btn-secondary", goBack));
+  actions.append(button(t("Continue"), "btn-primary", () => {
     if (state.answers[state.current] !== state.selected) {
       const relevant = new Set([...state.history, state.current]);
       Object.keys(state.answers).forEach(key => { if (!relevant.has(key)) delete state.answers[key]; });
@@ -169,22 +269,22 @@ async function postTable(table, value) {
 
 async function submit() {
   if (!configured) {
-    errorBox.textContent = "The survey is not connected yet. Please try again later.";
+    errorBox.textContent = t("The survey is not connected yet. Please try again later.");
     errorBox.hidden = false;
     return;
   }
   const submitButton = actions.querySelector(".btn-primary");
   submitButton.disabled = true;
-  submitButton.textContent = "Submitting…";
+  submitButton.textContent = t("Submitting…");
   try {
     await postTable("survey_responses", { role: state.role, answers: state.answers, status: state.status });
     state.current = "done";
     render();
   } catch {
-    errorBox.textContent = "We couldn’t submit your responses. Please check your connection and try again.";
+    errorBox.textContent = t("We couldn’t submit your responses. Please check your connection and try again.");
     errorBox.hidden = false;
     submitButton.disabled = false;
-    submitButton.textContent = "Submit responses";
+    submitButton.textContent = t("Submit responses");
   }
 }
 
@@ -192,4 +292,7 @@ if (configured && !sessionStorage.getItem("survey-visit-recorded")) {
   postTable("survey_visits", {}).then(() => sessionStorage.setItem("survey-visit-recorded", "1")).catch(() => {});
 }
 
+document.getElementById("share-url").textContent = shareUrl;
+document.getElementById("copy-link").addEventListener("click", () => copyShareLink(document.getElementById("copy-status")));
+drawQr(document.getElementById("home-qr"));
 render();

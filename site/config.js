@@ -1,5 +1,3 @@
-// Safe to publish: Supabase publishable keys are intended for browser use.
-// Never put a secret key or service_role key in this file.
-export const SUPABASE_URL = "";
-export const SUPABASE_PUBLISHABLE_KEY = "";
-
+// Generated from .env. Safe to publish: only the project URL and publishable key.
+export const SUPABASE_URL = "https://qdxpxujjjgxjhudqvpex.supabase.co";
+export const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_gC_qzXwSs6CA5Yd26fuSfw_hjG5gDFD";

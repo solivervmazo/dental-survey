@@ -1,54 +1,69 @@
-# Publish the dental duty research survey
+# Publish the dental survey
 
-The public survey is in `site/`. The owner dashboard remains local in `dashboard/` and is excluded from the GitHub Pages deployment.
+This repository is public. The GitHub Pages workflow publishes only `site/`. The local dashboard source is in the repository, but its database password stays in `.env` on your computer and is never deployed.
 
-## 1. Create the Supabase database
+## What belongs in GitHub
 
-1. In [Supabase](https://supabase.com/dashboard), create a project for this survey or select a project you deliberately want to use.
-2. Open **SQL Editor** and run the complete contents of [`supabase/schema.sql`](supabase/schema.sql). It creates the response and visit tables, with row-level security so public visitors can submit but cannot read responses.
-3. Under **Authentication → Users**, create your dashboard user. Copy that user's UUID.
-4. In SQL Editor, run:
+Commit `site/`, `dashboard/` source, `supabase/schema.sql`, `.github/workflows/pages.yml`, `.env.example`, `generate-public-config.mjs`, `local-server.mjs`, `start-dashboard.ps1`, `README.md`, and this guide. The checked-in `site/config.js` contains only the Supabase project URL and publishable key. These values are intended for public browser code when row-level security is enabled.
 
-   ```sql
-   insert into public.survey_admins (user_id)
-   values ('PASTE_YOUR_AUTH_USER_UUID_HERE');
-   ```
+Do **not** add `.env`, `node_modules/`, a Postgres connection URI, a database password, or any Supabase secret/service-role key. `.gitignore` excludes `.env` and dependencies.
 
-5. In **Project Settings → API** or the project's **Connect** dialog, copy the project URL and **publishable** key.
-6. Paste those two values into [`site/config.js`](site/config.js). Never use a secret key or service-role key in a browser file.
+## 1. Configure Supabase locally
 
-The public website can now submit answers through Supabase. The local dashboard can read them only after your admin user signs in.
+Create a local `.env` from [`.env.example`](.env.example) with these fields:
 
-## 2. Create and publish the GitHub Pages site
+```text
+SUPABASE_URL=your project URL
+SUPABASE_PUBLISHABLE_KEY=your sb_publishable_ key
+SUPABASE_DATABASE_URL=your full Postgres URI
+```
 
-1. In [GitHub](https://github.com/new), create an **empty** repository (do not add a README or license there). `dental-duty-research` is a suggested name. Public repositories work with GitHub Pages on GitHub Free; private repositories require an eligible paid plan.
-2. After editing `site/config.js`, run the commands below from this folder. Replace `YOUR_USERNAME` and the repository name if needed:
+Use the **Session pooler** URI from Supabase **Connect** if the direct `db.<project>.supabase.co` host does not resolve on your network. Session pooler uses port 5432 and works on IPv4 networks. Put the complete URI, including the password, only in your local `.env` file.
 
-   ```powershell
-   git add site/config.js
-   git commit -m "Connect Supabase project"
-   git remote add origin https://github.com/YOUR_USERNAME/dental-duty-research.git
-   git push -u origin main
-   ```
+After changing the public URL or publishable key, run `node generate-public-config.mjs`. This writes only those two public values to `site/config.js`.
 
-   This folder already has the first local Git commit. If `origin` already exists, use `git remote set-url origin <your-repository-url>` instead of `git remote add`.
+## 2. Apply the database schema
 
-3. In the GitHub repository, open **Settings → Pages**. Under **Build and deployment**, select **GitHub Actions** as the source.
-4. Open the **Actions** tab. If the `Publish questionnaire` workflow did not start after enabling Pages, select it and choose **Run workflow**.
-5. After the workflow succeeds, the survey URL will appear in **Settings → Pages**. For a normal project repository it usually has the form `https://YOUR_USERNAME.github.io/dental-duty-research/`.
+Install local dashboard dependencies once:
 
-The workflow uploads only `site/`, so the dashboard is not deployed. The GitHub repository itself can still contain the dashboard source and SQL setup files.
+```powershell
+cd dashboard/server
+npm install
+cd ../..
+```
 
-## 3. Open your dashboard on this computer
+Then apply the schema and row-level security policies:
 
-1. From the project folder, run `node local-server.mjs` in a terminal.
-2. Open [http://localhost:4173/dashboard/](http://localhost:4173/dashboard/).
-3. Sign in with the Supabase Auth user from step 1. The dashboard shows page views, submitted responses, completion counts, role totals, a seven-day trend, and CSV export.
+```powershell
+node dashboard/server/migrate.mjs
+```
 
-The dashboard is protected by Supabase authentication and database policies. Keep your account password private. Closing the browser tab removes its session token.
+This creates `survey_visits` and `survey_responses`. Anonymous visitors can insert, but cannot read submissions. The dashboard reads through the local server's database connection.
 
-## 4. Before sharing the link
+## 3. Push to GitHub
 
-Open the published survey once, choose a role, and submit a sample response. Then open the local dashboard and confirm the sample response appears. Page-view numbers are approximate because they count browser tab sessions and may miss blocked requests.
+Use the public repository `https://github.com/solivervmazo/dental-survey.git`:
 
-References: [GitHub Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), [Supabase API keys](https://supabase.com/docs/guides/getting-started/api-keys), [Supabase row-level security](https://supabase.com/docs/guides/database/postgres/row-level-security).
+```powershell
+git add .
+git commit -m "Update survey and sharing"
+git remote add origin https://github.com/solivervmazo/dental-survey.git
+git branch -M main
+git push -u origin main
+```
+
+If `origin` already exists, use `git remote set-url origin https://github.com/solivervmazo/dental-survey.git` instead of `git remote add`. Run `git status --short` before pushing: `.env` must not appear.
+
+## 4. Enable GitHub Pages
+
+In the GitHub repository, open **Settings → Pages** and set **Build and deployment → Source** to **GitHub Actions**. The included `Publish questionnaire` workflow uploads only `site/`. If the workflow did not run after the push, open **Actions → Publish questionnaire → Run workflow**.
+
+The expected survey URL is `https://solivervmazo.github.io/dental-survey/`. The page builds its copy link and QR code from its live URL, so they will point to this address after publication.
+
+## 5. Open the local dashboard
+
+From the project folder, run `node local-server.mjs` and visit `http://localhost:4173/dashboard/`. It shows page views, submissions, role counts, a seven-day trend, response details, and CSV export. The server listens on `127.0.0.1` and reads the Postgres URI from `.env`; the browser never receives that URI.
+
+Page views are approximate because they are recorded once per browser tab session and may be blocked by network settings. Before sharing the survey, submit one sample response and confirm it appears in the local dashboard.
+
+References: [GitHub Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), [Supabase API keys](https://supabase.com/docs/guides/getting-started/api-keys), [Supabase Postgres connection modes](https://supabase.com/docs/guides/database/connecting-to-postgres).

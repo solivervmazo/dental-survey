@@ -13,29 +13,39 @@
   <body>
     <div class="site-shell">
       <header class="site-header">
-        <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><span>Soliver V. Mazo <small>Research study</small></span></div>
-        <span class="header-note">Dental clinic scheduling</span>
+        <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><span>Soliver V. Mazo <small data-i18n>Research study</small></span></div>
       </header>
 
       <main class="layout">
         <aside class="intro">
-          <p class="eyebrow">MARKET RESEARCH · PHILIPPINES</p>
-          <h1>How do dental clinics arrange dentist duty?</h1>
-          <p>Hello, I’m <strong>Soliver V. Mazo</strong>. I’m conducting market research for a technology startup to understand how dental clinics and dentists manage duty schedules today.</p>
-          <p>This short questionnaire asks about your experience in the past six months. There are no right or wrong answers. Please do not include patient names or other personal information.</p>
-          <div class="study-note"><span class="note-icon" aria-hidden="true">i</span><span>Your answers help identify whether scheduling challenges occur, how often they happen, and how people currently handle them.</span></div>
+          <p class="eyebrow" data-i18n>MARKET RESEARCH · PHILIPPINES</p>
+          <h1 data-i18n>How do dental clinics arrange dentist duty?</h1>
+          <p data-i18n>Hello, I’m Soliver V. Mazo, a tech startup founder. I’m researching how dental clinics and dentists arrange duty schedules.</p>
+          <p data-i18n>This short survey asks about the past six months. There are no right or wrong answers. Please do not include patient information.</p>
+          <div class="study-note"><span class="note-icon" aria-hidden="true">i</span><span data-i18n>Your answers show how often scheduling gaps happen and how clinics handle them.</span></div>
         </aside>
 
-        <section class="survey-card" aria-labelledby="survey-title">
+        <section class="survey-card" aria-label="Questionnaire">
           <div class="card-top"><span id="step-label" class="step-label">START HERE</span><span id="progress-label" class="progress-label">About 3 minutes</span></div>
           <div class="progress-track" aria-hidden="true"><div id="progress-fill"></div></div>
           <div id="survey-content" aria-live="polite"></div>
           <p id="survey-error" class="error" role="alert" hidden></p>
           <div id="survey-actions" class="actions"></div>
         </section>
+
+        <section class="share-panel" aria-labelledby="share-heading">
+          <div class="share-message">
+            <p class="eyebrow" data-i18n>SHARE THIS STUDY</p>
+            <h2 id="share-heading" data-i18n>Know another doctor or clinic?</h2>
+            <p data-i18n>Please share this questionnaire with them. More perspectives will help us understand dentist duty across clinics.</p>
+            <div class="share-link-row"><span id="share-url" class="share-url"></span><button id="copy-link" class="copy-button" type="button" data-i18n>Copy link</button></div>
+            <p id="copy-status" class="copy-status" role="status"></p>
+          </div>
+          <div class="qr-wrap"><div id="home-qr" class="qr-code" role="img" aria-label="QR code for this questionnaire"></div><span data-i18n>Scan to open the questionnaire</span></div>
+        </section>
       </main>
 
-      <footer class="site-footer"><span>Independent research by Soliver V. Mazo</span><span>Questions are about work practices, not patient care.</span></footer>
+      <footer class="site-footer"><span data-i18n>Independent research by Soliver V. Mazo</span><span data-i18n>Questions are about work practices, not patient care.</span><span><span data-i18n>Interested in a custom application? Contact me at</span> <a href="mailto:solivervmazo.jobs@gmail.com">solivervmazo.jobs@gmail.com</a></span></footer>
     </div>
   </body>
 </html>
