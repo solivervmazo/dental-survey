@@ -177,6 +177,7 @@ function render() {
   clear();
   updateStaticLanguage();
   document.body.classList.toggle("survey-start", state.current === "intro" || state.current === "role");
+  document.body.classList.toggle("survey-intro", state.current === "intro");
   restartLink.hidden = state.current === "intro" && state.history.length === 0;
   languageSlot.replaceChildren(languageControl());
   if (state.current === "intro") {
