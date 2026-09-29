@@ -124,9 +124,8 @@ function render() {
   }
 
   const question = questions[state.current];
-  const answered = Object.keys(state.answers).length;
   stepLabel.textContent = "QUESTIONNAIRE";
-  progressLabel.textContent = `Question ${answered + (state.selected ? 0 : 1)}`;
+  progressLabel.textContent = `Question ${state.history.length}`;
   progressFill.style.width = `${Math.min(89, 12 + (state.history.length / 9) * 77)}%`;
   content.append(element("h2", "", question.text));
   content.append(element("p", "question-hint", "Select one answer."));
