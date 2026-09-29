@@ -1,5 +1,43 @@
 const dashboardError = document.getElementById("dashboard-error");
+const liveStatus = document.getElementById("live-status");
+const soundButton = document.getElementById("sound-alerts");
 let rows = [];
+let latestCounts = null;
+let soundEnabled = false;
+let audioContext = null;
+let polling = false;
+let resetting = false;
+
+function setLiveStatus(message, newResponse = false) {
+  liveStatus.textContent = message;
+  liveStatus.classList.toggle("new-response", newResponse);
+}
+
+async function playAlert() {
+  if (!soundEnabled || !audioContext) return;
+  try {
+    await audioContext.resume();
+    const start = audioContext.currentTime;
+    [740, 988].forEach((frequency, index) => {
+      const tone = audioContext.createOscillator();
+      const volume = audioContext.createGain();
+      const at = start + index * 0.2;
+      tone.type = "sine";
+      tone.frequency.value = frequency;
+      volume.gain.setValueAtTime(0.0001, at);
+      volume.gain.exponentialRampToValueAtTime(0.12, at + 0.02);
+      volume.gain.exponentialRampToValueAtTime(0.0001, at + 0.16);
+      tone.connect(volume).connect(audioContext.destination);
+      tone.start(at);
+      tone.stop(at + 0.17);
+    });
+  } catch {
+    soundEnabled = false;
+    soundButton.setAttribute("aria-pressed", "false");
+    soundButton.textContent = "Enable sound alerts";
+    setLiveStatus("Sound is unavailable in this browser. New submissions still appear here.");
+  }
+}
 
 function showError(message) {
   dashboardError.textContent = message;
@@ -21,9 +59,9 @@ function renderBars(target, items) {
 }
 
 const answerLabels = {
-  owner_1: "Arranges duty", owner_2: "Needed extra coverage", owner_3: "Frequency", owner_4: "Reason", owner_5: "Notice", owner_6: "First action", owner_7: "Dentists contacted", owner_8: "Outcome", owner_9: "Patient impact", owner_10: "Staff time",
-  receptionist_1: "Arranges schedules", receptionist_2: "Handled open duty", receptionist_3: "Availability source", receptionist_4: "Dentists contacted", receptionist_5: "Time to confirm", receptionist_6: "Schedule record", receptionist_7: "Patient impact",
-  dentist_1: "Multiple clinics", dentist_2: "Additional duty request", dentist_3: "Clinics worked", dentist_4: "Offer frequency", dentist_5: "Notice", dentist_6: "Reason declined", dentist_7: "Schedule tracking", dentist_8: "Schedule conflict",
+  owner_1: "Arranges duty", owner_clinic_size: "Dentists per week", owner_2: "Uncovered duty slot", owner_3: "Frequency", owner_4: "Reason", owner_5: "Notice", owner_6: "First action", owner_7: "Dentists contacted", owner_8: "Outcome", owner_9: "Appointments moved or cancelled", owner_10: "Staff time",
+  receptionist_1: "Arranges schedules", receptionist_clinic_size: "Dentists per week", receptionist_2: "Handled open duty", receptionist_gap_frequency: "Uncovered slot frequency", receptionist_3: "Availability source", receptionist_4: "Dentists contacted", receptionist_5: "Time to confirm", receptionist_6: "Schedule record", receptionist_7: "Appointments moved or cancelled",
+  dentist_1: "Multiple clinics", dentist_2: "Additional duty request", dentist_3: "Clinics worked", dentist_4: "Offer frequency", dentist_5: "Notice", dentist_decline_frequency: "Decline frequency", dentist_6: "Reason declined", dentist_7: "Schedule tracking", dentist_8: "Schedule conflict",
   daily_problem: "Day-to-day problem", app_wish: "App they wish existed",
 };
 
@@ -61,18 +99,103 @@ async function load() {
     document.getElementById("responses").textContent = data.responses.toLocaleString();
     document.getElementById("complete").textContent = data.complete.toLocaleString();
     document.getElementById("rate").textContent = data.visits ? `${Math.round(data.responses / data.visits * 100)}%` : "0%";
+    latestCounts = { visits: data.visits, responses: data.responses };
     const roles = Object.fromEntries(data.roles.map(item => [item.role, item.total]));
     renderBars("roles", [["Owner / manager", roles.owner || 0], ["Receptionist", roles.receptionist || 0], ["Dentist", roles.dentist || 0]]);
     const daily = Object.fromEntries(data.daily.map(item => [item.day, item.total]));
     const days = Array.from({ length: 7 }, (_, index) => new Date(Date.now() - (6 - index) * 86400000));
     renderBars("daily", days.map(day => [new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Manila", month: "short", day: "numeric" }).format(day), daily[dayKey(day)] || 0]));
     renderResponses(rows);
+    return data;
   } catch (error) {
     showError(error.message);
+    return null;
   }
 }
 
-document.getElementById("refresh").addEventListener("click", load);
+async function checkForUpdates() {
+  if (polling || resetting) return;
+  polling = true;
+  try {
+    const response = await fetch("/api/latest", { cache: "no-store" });
+    const counts = await response.json();
+    if (!response.ok) throw new Error(counts.error || "Could not check for updates.");
+    if (!latestCounts) {
+      await load();
+    } else if (counts.responses !== latestCounts.responses || counts.visits !== latestCounts.visits) {
+      const previousResponses = latestCounts.responses;
+      const data = await load();
+      if (data && data.responses > previousResponses) {
+        const added = data.responses - previousResponses;
+        setLiveStatus(`${added} new survey ${added === 1 ? "response" : "responses"} received.`, true);
+        await playAlert();
+      } else if (data) {
+        setLiveStatus("Checking for new submissions every 15 seconds while this page is open.");
+      }
+    }
+  } catch {
+    setLiveStatus("Connection interrupted. Checking again shortly.");
+  } finally {
+    polling = false;
+  }
+}
+
+soundButton.addEventListener("click", async () => {
+  if (soundEnabled) {
+    soundEnabled = false;
+    soundButton.setAttribute("aria-pressed", "false");
+    soundButton.textContent = "Enable sound alerts";
+    setLiveStatus("Sound alerts off. New submissions will still appear here.");
+    return;
+  }
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) {
+    setLiveStatus("Sound is unavailable in this browser. New submissions still appear here.");
+    return;
+  }
+  try {
+    audioContext ||= new AudioContextClass();
+    await audioContext.resume();
+    soundEnabled = true;
+    soundButton.setAttribute("aria-pressed", "true");
+    soundButton.textContent = "Disable sound alerts";
+    setLiveStatus("Sound alerts on. Checking every 15 seconds while this page is open.");
+    await playAlert();
+  } catch {
+    setLiveStatus("Sound could not be enabled in this browser.");
+  }
+});
+
+document.getElementById("refresh").addEventListener("click", async () => {
+  if (await load()) setLiveStatus("Checking for new submissions every 15 seconds while this page is open.");
+});
+document.getElementById("reset-data").addEventListener("click", async event => {
+  const phrase = window.prompt("This permanently deletes every recorded visit and submitted response. Export CSV first if you need a copy. Type RESET SURVEY DATA to confirm:");
+  if (phrase !== "RESET SURVEY DATA") return;
+  const button = event.currentTarget;
+  const status = document.getElementById("reset-status");
+  resetting = true;
+  button.disabled = true;
+  status.textContent = "Clearing research data…";
+  try {
+    const response = await fetch("/api/reset", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ confirmation: phrase }),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Could not reset research data.");
+    await load();
+    status.textContent = `Cleared ${result.visits} visit(s) and ${result.responses} response(s).`;
+    setLiveStatus("Research data cleared. Checking for new submissions every 15 seconds.");
+  } catch (error) {
+    status.textContent = "";
+    showError(error.message);
+  } finally {
+    resetting = false;
+    button.disabled = false;
+  }
+});
 document.getElementById("export").addEventListener("click", () => {
   const quote = value => `"${String(value ?? "").replaceAll('"', '""')}"`;
   const csv = ["created_at,role,status,answers", ...rows.map(row => [row.created_at, row.role, row.status, JSON.stringify(row.answers)].map(quote).join(","))].join("\r\n");
@@ -81,3 +204,4 @@ document.getElementById("export").addEventListener("click", () => {
 });
 
 load();
+setInterval(checkForUpdates, 15000);

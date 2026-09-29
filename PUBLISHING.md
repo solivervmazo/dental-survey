@@ -62,8 +62,8 @@ The expected survey URL is `https://solivervmazo.github.io/dental-survey/`. The 
 
 ## 5. Open the local dashboard
 
-From the project folder, run `node local-server.mjs` and visit `http://localhost:4173/dashboard/`. It shows page views, submissions, role counts, a seven-day trend, response details, and CSV export. The server listens on `127.0.0.1` and reads the Postgres URI from `.env`; the browser never receives that URI.
+From the project folder, run `node local-server.mjs` and visit `http://localhost:4173/dashboard/`. It shows page views, submissions, role counts, a seven-day trend, response details, and CSV export. It checks for new submissions every 15 seconds while the page is open. Click **Enable sound alerts** once to permit the browser to play a sound for new responses. The server listens on `127.0.0.1` and reads the Postgres URI from `.env`; the browser never receives that URI.
 
-Page views are approximate because they are recorded once per browser tab session and may be blocked by network settings. Before sharing the survey, submit one sample response and confirm it appears in the local dashboard.
+Page views are approximate because they are recorded once per browser tab session and may be blocked by network settings. Before sharing the survey, submit one sample response and confirm it appears in the local dashboard. Use **Export CSV** if you want to keep the sample, then **Reset data** to clear all visits and responses. Reset requires typing `RESET SURVEY DATA` and cannot be undone in the dashboard.
 
 References: [GitHub Pages workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), [Supabase API keys](https://supabase.com/docs/guides/getting-started/api-keys), [Supabase Postgres connection modes](https://supabase.com/docs/guides/database/connecting-to-postgres).

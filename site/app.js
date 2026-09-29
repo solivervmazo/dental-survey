@@ -9,36 +9,41 @@ const roles = [
 ];
 
 const questions = {
-  owner_1: { text: "Are you involved in arranging or approving dentist duty at your clinic?", options: ["Yes", "No"], next: { Yes: "owner_2", No: "end" } },
-  owner_2: { text: "In the past six months, has your clinic needed a dentist outside its confirmed duty schedule?", options: ["Yes", "No"], next: { Yes: "owner_3", No: "end" } },
+  owner_1: { text: "Are you involved in arranging or approving dentist duty at your clinic?", options: ["Yes", "No"], next: { Yes: "owner_clinic_size", No: "end" } },
+  owner_clinic_size: { text: "How many dentists are usually scheduled at your clinic in a typical week?", options: ["1", "2–3", "4–6", "7 or more", "Not sure"], next: "owner_2" },
+  owner_2: { text: "In the past six months, has your clinic had a duty slot without a confirmed dentist?", options: ["Yes", "No"], next: { Yes: "owner_3", No: "end" } },
   owner_3: { text: "How often did this happen in the past six months?", options: ["Once", "2–3 times", "4–6 times", "More than 6 times", "Not sure"], next: "owner_4" },
-  owner_4: { text: "What was the most common reason?", options: ["A dentist became unavailable", "More patient bookings than expected", "A new or uncovered duty slot", "Another reason", "Not sure"], next: "owner_5" },
+  owner_4: { text: "What was the most common reason?", options: ["A dentist became unavailable", "More patient bookings than expected", "The clinic added a new duty period", "Another reason", "Not sure"], next: "owner_5" },
   owner_5: { text: "How much notice did you usually have?", options: ["Same day", "1 day", "2–7 days", "More than a week", "It varied"], next: "owner_6" },
   owner_6: { text: "What did your clinic usually do first?", options: ["Contact dentists already working with us", "Ask another clinic or colleague for a referral", "Contact dentists through personal networks", "Move or cancel appointments", "Another action"], next: "owner_7" },
-  owner_7: { text: "How many dentists did you typically contact before filling a duty slot?", options: ["1", "2–3", "4–6", "7 or more", "We usually could not fill it", "Not sure"], next: "owner_8" },
+  owner_7: { text: "How many dentists did your clinic usually contact for an open duty slot?", options: ["0", "1", "2–3", "4–6", "7 or more", "Not sure"], next: "owner_8" },
   owner_8: { text: "What was the usual outcome?", options: ["A dentist was confirmed in time", "A dentist was confirmed, but late", "Appointments were moved or cancelled", "The clinic operated with reduced coverage", "It varied"], next: "owner_9" },
-  owner_9: { text: "Did these situations affect patient appointments?", options: ["Yes, often", "Yes, sometimes", "No", "Not sure"], next: "owner_10" },
+  owner_9: { text: "About how many patient appointments were moved or cancelled in the past six months because a dentist was unavailable?", options: ["None", "1–2", "3–5", "6 or more", "Not sure"], next: "owner_10" },
   owner_10: { text: "How much staff time did finding coverage usually take?", options: ["Under 15 minutes", "15–30 minutes", "31–60 minutes", "More than an hour", "Not sure"], next: "end" },
 
-  receptionist_1: { text: "Do you help arrange or confirm dentist duty schedules?", options: ["Yes", "No"], next: { Yes: "receptionist_2", No: "end" } },
-  receptionist_2: { text: "In the past six months, have you handled a duty slot without a confirmed dentist?", options: ["Yes", "No"], next: { Yes: "receptionist_3", No: "end" } },
+  receptionist_1: { text: "Do you help arrange or confirm dentist duty schedules?", options: ["Yes", "No"], next: { Yes: "receptionist_clinic_size", No: "end" } },
+  receptionist_clinic_size: { text: "How many dentists are usually scheduled at your clinic in a typical week?", options: ["1", "2–3", "4–6", "7 or more", "Not sure"], next: "receptionist_2" },
+  receptionist_2: { text: "In the past six months, have you handled a duty slot without a confirmed dentist?", options: ["Yes", "No"], next: { Yes: "receptionist_gap_frequency", No: "end" } },
+  receptionist_gap_frequency: { text: "About how many uncovered dentist duty slots did you handle in the past six months?", options: ["Once", "2–3 times", "4–6 times", "More than 6 times", "Not sure"], next: "receptionist_3" },
   receptionist_3: { text: "How did you usually find out which dentists were available?", options: ["Call or text them individually", "Check a shared schedule", "Ask the owner or manager", "Ask another staff member", "Another way"], next: "receptionist_4" },
-  receptionist_4: { text: "How many dentists did you typically contact for one open duty slot?", options: ["1", "2–3", "4–6", "7 or more", "Not sure"], next: "receptionist_5" },
-  receptionist_5: { text: "How long did it usually take to confirm someone?", options: ["Under 15 minutes", "15–30 minutes", "31–60 minutes", "More than an hour", "We sometimes could not confirm anyone"], next: "receptionist_6" },
+  receptionist_4: { text: "How many dentists did you typically contact for one open duty slot?", options: ["0", "1", "2–3", "4–6", "7 or more", "Not sure"], next: "receptionist_5" },
+  receptionist_5: { text: "For the most recent open duty slot, how long did it take to confirm someone?", options: ["Under 15 minutes", "15–30 minutes", "31–60 minutes", "More than an hour", "No one was confirmed", "Not sure"], next: "receptionist_6" },
   receptionist_6: { text: "Where were duty schedules usually recorded?", options: ["Paper or whiteboard", "Spreadsheet", "Calendar app", "Clinic software", "Messages or chat", "Another place"], next: "receptionist_7" },
-  receptionist_7: { text: "Did an unfilled duty slot affect patient appointments?", options: ["Yes, often", "Yes, sometimes", "No", "Not sure"], next: "end" },
+  receptionist_7: { text: "About how many patient appointments were moved or cancelled in the past six months because a dentist was unavailable?", options: ["None", "1–2", "3–5", "6 or more", "Not sure"], next: "end" },
 
   dentist_1: { text: "Do you currently practice at more than one dental clinic?", options: ["Yes", "No"], next: "dentist_2" },
   dentist_2: { text: "In the past six months, have you been asked to cover an additional duty slot at a clinic?", options: ["Yes", "No"], next: (answer, all) => answer === "No" && all.dentist_1 === "No" ? "end" : "dentist_3" },
   dentist_3: { text: "How many clinics have you worked with in the past six months?", options: ["1", "2", "3", "4 or more"], next: (answer, all) => all.dentist_2 === "Yes" ? "dentist_4" : "dentist_7" },
   dentist_4: { text: "How often were you asked to take an additional duty slot?", options: ["Once", "2–3 times", "4–6 times", "More than 6 times", "Not sure"], next: "dentist_5" },
-  dentist_5: { text: "How much notice did you usually receive?", options: ["Same day", "1 day", "2–7 days", "More than a week", "It varied"], next: "dentist_6" },
-  dentist_6: { text: "If you declined an offer, what was the most common reason?", options: ["I had another clinic duty", "I had a personal commitment", "Travel or location was difficult", "The terms did not work for me", "I did not decline any offers", "Another reason"], next: "dentist_7" },
+  dentist_5: { text: "How much notice did you usually receive?", options: ["Same day", "1 day", "2–7 days", "More than a week", "It varied"], next: "dentist_decline_frequency" },
+  dentist_decline_frequency: { text: "In the past six months, how often did you decline an additional duty slot?", options: ["Never", "Once", "2–3 times", "4 or more times", "Not sure"], next: answer => ["Once", "2–3 times", "4 or more times"].includes(answer) ? "dentist_6" : "dentist_7" },
+  dentist_6: { text: "When you declined, what was the most common reason?", options: ["I had another clinic duty", "I had a personal commitment", "Travel or location was difficult", "The terms did not work for me", "Another reason"], next: "dentist_7" },
   dentist_7: { text: "How do you currently track your clinic duty schedules?", options: ["Personal calendar", "Paper notes", "Messages or chat", "A clinic's system", "I do not keep a separate record", "Another way"], next: "dentist_8" },
   dentist_8: { text: "In the past six months, have you had a scheduling conflict between clinics?", options: ["Yes", "No", "Not sure"], next: "end" },
 };
 
 const firstByRole = { owner: "owner_1", receptionist: "receptionist_1", dentist: "dentist_1" };
+const earlyExitQuestions = new Set(["owner_1", "owner_2", "receptionist_1", "receptionist_2", "dentist_2"]);
 const content = document.getElementById("survey-content");
 const actions = document.getElementById("survey-actions");
 const languageSlot = document.getElementById("language-slot");
@@ -47,7 +52,7 @@ const errorBox = document.getElementById("survey-error");
 const stepLabel = document.getElementById("step-label");
 const progressLabel = document.getElementById("progress-label");
 const progressFill = document.getElementById("progress-fill");
-const state = { role: null, current: "role", selected: null, answers: {}, history: [], status: "completed", language: localStorage.getItem("survey-language") === "tl" ? "tl" : "en" };
+const state = { role: null, current: "intro", selected: null, answers: {}, history: [], status: "completed", language: localStorage.getItem("survey-language") === "tl" ? "tl" : "en" };
 const publicUrl = new URL(window.location.href);
 publicUrl.search = "";
 publicUrl.hash = "";
@@ -171,9 +176,22 @@ function choices(options, selectedValue, onSelect) {
 function render() {
   clear();
   updateStaticLanguage();
-  document.body.classList.toggle("survey-start", state.current === "role");
-  restartLink.hidden = state.current === "role" && state.history.length === 0;
+  document.body.classList.toggle("survey-start", state.current === "intro" || state.current === "role");
+  restartLink.hidden = state.current === "intro" && state.history.length === 0;
   languageSlot.replaceChildren(languageControl());
+  if (state.current === "intro") {
+    stepLabel.textContent = t("START HERE");
+    progressLabel.textContent = t("About 3 minutes");
+    progressFill.style.width = "3%";
+    content.append(element("h2", "", t("Before you begin")));
+    content.append(element("p", "privacy-note", t("For your privacy, please do not share your clinic name, your name, contact details, or any patient information in your answers.")));
+    actions.append(button(t("Start"), "btn-primary", () => {
+      state.history.push("intro");
+      state.current = "role";
+      render();
+    }));
+    return;
+  }
   if (state.current === "role") {
     stepLabel.textContent = t("START HERE");
     progressLabel.textContent = t("About 3 minutes");
@@ -181,6 +199,7 @@ function render() {
     content.append(element("h2", "", t("Please select your role")));
     content.append(element("p", "question-hint", t("We’ll show questions relevant to your work.")));
     content.append(choices(roles.map(([value, label]) => [value, t(label)]), state.selected, value => { state.selected = value; render(); }));
+    actions.append(button(t("Back"), "btn-secondary", goBack));
     actions.append(button(t("Continue"), "btn-primary", () => {
       state.role = state.selected;
       state.history.push("role");
@@ -243,7 +262,7 @@ function render() {
     const route = question.next;
     const next = typeof route === "function" ? route(state.selected, state.answers) : typeof route === "string" ? route : route[state.selected];
     state.history.push(state.current);
-    state.status = next === "end" && state.history.length <= 3 ? "screened_out" : "completed";
+    state.status = next === "end" && earlyExitQuestions.has(state.current) ? "screened_out" : "completed";
     state.current = next;
     state.selected = state.answers[next] ?? null;
     render();
@@ -253,7 +272,7 @@ function render() {
 restartLink.addEventListener("click", event => {
   event.preventDefault();
   state.role = null;
-  state.current = "role";
+  state.current = "intro";
   state.selected = null;
   state.answers = {};
   state.history = [];

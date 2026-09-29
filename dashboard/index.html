@@ -11,11 +11,13 @@
     <header class="topbar"><div><span class="mark">S</span><strong>Dental duty research</strong><span class="private-label">LOCAL DASHBOARD</span></div></header>
     <main>
       <section id="dashboard-panel">
-        <div class="heading"><div><span class="eyebrow">SURVEY PERFORMANCE</span><h1>Research overview</h1><p>Page views and questionnaire submissions. Page views count browser sessions, not unique people.</p></div><button id="refresh" class="secondary">Refresh</button></div>
+        <div class="heading"><div><span class="eyebrow">SURVEY PERFORMANCE</span><h1>Research overview</h1><p>Page views and questionnaire submissions. Page views count browser sessions, not unique people.</p></div><div class="heading-actions"><button id="sound-alerts" class="secondary" aria-pressed="false">Enable sound alerts</button><button id="refresh" class="secondary">Refresh</button></div></div>
+        <p id="live-status" class="live-status" role="status">Checking for new submissions every 15 seconds while this page is open.</p>
         <p id="dashboard-error" class="error" role="alert" hidden></p>
         <div class="metrics"><article><span>Page views</span><strong id="views">—</strong></article><article><span>Submissions</span><strong id="responses">—</strong></article><article><span>Full responses</span><strong id="complete">—</strong></article><article><span>Submission rate</span><strong id="rate">—</strong></article></div>
         <div class="grid"><section class="panel"><h2>Responses by role</h2><div id="roles" class="role-list"></div></section><section class="panel"><h2>Last 7 days</h2><div id="daily" class="daily-list"></div></section></div>
         <section class="panel response-panel"><div class="section-head"><div><h2>Submitted responses</h2><p>Includes early exits and the optional day-to-day problem answers.</p></div><button id="export" class="secondary">Export CSV</button></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Role</th><th>Status</th><th>Answers</th></tr></thead><tbody id="response-rows"></tbody></table></div></section>
+        <section class="panel reset-panel"><div><h2>Reset research data</h2><p>Before sending the survey to clinics, you can clear all visits and submitted responses. Export CSV first if you want to keep a copy.</p><p id="reset-status" role="status"></p></div><button id="reset-data" class="danger">Reset data</button></section>
       </section>
     </main>
   </body>

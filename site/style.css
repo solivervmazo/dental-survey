@@ -14,3 +14,4 @@
 @media(max-width:540px){.survey-under-card{padding:10px 4px 0}.survey-under-card .language-option{padding:6px 9px}.actions{display:flex;flex-wrap:nowrap;justify-content:space-between;gap:9px}.actions .btn-secondary{flex:none}.actions .btn-primary{flex:none;max-width:100%;margin-left:auto;padding:10px 14px;font-size:.88rem}}
 @media(min-width:851px){.share-panel .qr-code{width:140px;height:140px}.completion-share .qr-code{width:135px;height:135px}}
 .site-shell{display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}.layout{width:100%;flex:1;align-content:start}.site-footer{width:100%;margin-top:auto}
+.privacy-note{max-width:470px;padding:18px 19px;border-left:3px solid var(--teal);border-radius:0 10px 10px 0;background:var(--pale);color:#315967;font-size:1rem;line-height:1.65}
