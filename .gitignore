@@ -1,0 +1,35 @@
+# Unused starter scaffold from the earlier hosting setup.
+.openai/
+.sites-runtime/
+app/
+build/
+components/
+db/
+drizzle/
+examples/
+hooks/
+lib/
+public/
+scripts/
+vendor/
+node_modules/
+.wrangler/
+.next/
+dist/
+cloudflare-env.d.ts
+components.json
+drizzle.config.ts
+eslint.config.mjs
+next.config.ts
+package.json
+package-lock.json
+pnpm-lock.yaml
+postcss.config.mjs
+tsconfig.json
+vite.config.ts
+.npmrc
+
+# Keep personal configuration and secret material out of Git.
+.env
+.env.*
+*.secret

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#102c47" />
+    <meta name="description" content="A short research questionnaire about how dental clinics arrange dentist duty." />
+    <title>Dental Clinic Scheduling Research</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23102c47'/%3E%3Cpath d='M19 20h26v7H19zm0 13h18v7H19zm0 13h26v3H19z' fill='%23bde9e1'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./style.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><span>Soliver V. Mazo <small>Research study</small></span></div>
+        <span class="header-note">Dental clinic scheduling</span>
+      </header>
+
+      <main class="layout">
+        <aside class="intro">
+          <p class="eyebrow">MARKET RESEARCH · PHILIPPINES</p>
+          <h1>How do dental clinics arrange dentist duty?</h1>
+          <p>Hello, I’m <strong>Soliver V. Mazo</strong>. I’m conducting market research for a technology startup to understand how dental clinics and dentists manage duty schedules today.</p>
+          <p>This short questionnaire asks about your experience in the past six months. There are no right or wrong answers. Please do not include patient names or other personal information.</p>
+          <div class="study-note"><span class="note-icon" aria-hidden="true">i</span><span>Your answers help identify whether scheduling challenges occur, how often they happen, and how people currently handle them.</span></div>
+        </aside>
+
+        <section class="survey-card" aria-labelledby="survey-title">
+          <div class="card-top"><span id="step-label" class="step-label">START HERE</span><span id="progress-label" class="progress-label">About 3 minutes</span></div>
+          <div class="progress-track" aria-hidden="true"><div id="progress-fill"></div></div>
+          <div id="survey-content" aria-live="polite"></div>
+          <p id="survey-error" class="error" role="alert" hidden></p>
+          <div id="survey-actions" class="actions"></div>
+        </section>
+      </main>
+
+      <footer class="site-footer"><span>Independent research by Soliver V. Mazo</span><span>Questions are about work practices, not patient care.</span></footer>
+    </div>
+  </body>
+</html>
