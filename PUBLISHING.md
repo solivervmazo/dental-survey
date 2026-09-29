@@ -21,15 +21,17 @@ The public website can now submit answers through Supabase. The local dashboard 
 
 ## 2. Create and publish the GitHub Pages site
 
-1. In [GitHub](https://github.com/new), create a repository. `dental-duty-research` is a suggested name. Public repositories work with GitHub Pages on GitHub Free; private repositories require an eligible paid plan.
-2. From this folder, run the commands below. Replace `YOUR_USERNAME` and the repository name if needed:
+1. In [GitHub](https://github.com/new), create an **empty** repository (do not add a README or license there). `dental-duty-research` is a suggested name. Public repositories work with GitHub Pages on GitHub Free; private repositories require an eligible paid plan.
+2. After editing `site/config.js`, run the commands below from this folder. Replace `YOUR_USERNAME` and the repository name if needed:
 
    ```powershell
+   git add site/config.js
+   git commit -m "Connect Supabase project"
    git remote add origin https://github.com/YOUR_USERNAME/dental-duty-research.git
    git push -u origin main
    ```
 
-   This folder already has a local Git commit. If `origin` already exists, use `git remote set-url origin <your-repository-url>` instead of `git remote add`.
+   This folder already has the first local Git commit. If `origin` already exists, use `git remote set-url origin <your-repository-url>` instead of `git remote add`.
 
 3. In the GitHub repository, open **Settings → Pages**. Under **Build and deployment**, select **GitHub Actions** as the source.
 4. Open the **Actions** tab. If the `Publish questionnaire` workflow did not start after enabling Pages, select it and choose **Run workflow**.
