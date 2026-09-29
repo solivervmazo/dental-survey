@@ -25,6 +25,7 @@ const tagalog = {
   "Dentist": "Dentista",
   "Continue": "Magpatuloy",
   "Back": "Bumalik",
+  "Restart": "Magsimula muli",
   "QUESTIONNAIRE": "TALATANUNGAN",
   "Question": "Tanong",
   "Select one answer.": "Pumili ng isang sagot.",

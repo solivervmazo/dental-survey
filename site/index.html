@@ -25,13 +25,19 @@
           <div class="study-note"><span class="note-icon" aria-hidden="true">i</span><span data-i18n>Your answers show how often scheduling gaps happen and how clinics handle them.</span></div>
         </aside>
 
-        <section class="survey-card" aria-label="Questionnaire">
-          <div class="card-top"><span id="step-label" class="step-label">START HERE</span><span id="progress-label" class="progress-label">About 3 minutes</span></div>
-          <div class="progress-track" aria-hidden="true"><div id="progress-fill"></div></div>
-          <div id="survey-content" aria-live="polite"></div>
-          <p id="survey-error" class="error" role="alert" hidden></p>
-          <div id="survey-actions" class="actions"></div>
-        </section>
+        <div class="survey-column">
+          <section class="survey-card" aria-label="Questionnaire">
+            <div class="card-top"><span id="step-label" class="step-label">START HERE</span><span id="progress-label" class="progress-label">About 3 minutes</span></div>
+            <div class="progress-track" aria-hidden="true"><div id="progress-fill"></div></div>
+            <div id="survey-content" aria-live="polite"></div>
+            <p id="survey-error" class="error" role="alert" hidden></p>
+            <div id="survey-actions" class="actions"></div>
+          </section>
+          <div class="survey-under-card">
+            <a id="restart-survey" class="restart-link" href="./" data-i18n>Restart</a>
+            <div id="language-slot"></div>
+          </div>
+        </div>
 
         <section class="share-panel" aria-labelledby="share-heading">
           <div class="share-message">

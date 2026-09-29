@@ -41,6 +41,8 @@ const questions = {
 const firstByRole = { owner: "owner_1", receptionist: "receptionist_1", dentist: "dentist_1" };
 const content = document.getElementById("survey-content");
 const actions = document.getElementById("survey-actions");
+const languageSlot = document.getElementById("language-slot");
+const restartLink = document.getElementById("restart-survey");
 const errorBox = document.getElementById("survey-error");
 const stepLabel = document.getElementById("step-label");
 const progressLabel = document.getElementById("progress-label");
@@ -170,7 +172,8 @@ function render() {
   clear();
   updateStaticLanguage();
   document.body.classList.toggle("survey-start", state.current === "role");
-  actions.append(languageControl());
+  restartLink.hidden = state.current === "role" && state.history.length === 0;
+  languageSlot.replaceChildren(languageControl());
   if (state.current === "role") {
     stepLabel.textContent = t("START HERE");
     progressLabel.textContent = t("About 3 minutes");
@@ -246,6 +249,17 @@ function render() {
     render();
   }, !state.selected));
 }
+
+restartLink.addEventListener("click", event => {
+  event.preventDefault();
+  state.role = null;
+  state.current = "role";
+  state.selected = null;
+  state.answers = {};
+  state.history = [];
+  state.status = "completed";
+  render();
+});
 
 function goBack() {
   const previous = state.history.pop();
