@@ -7,6 +7,9 @@ let soundEnabled = false;
 let audioContext = null;
 let polling = false;
 let resetting = false;
+let selectedQuestionRole = null;
+let roleTotals = {};
+let totalSubmissions = 0;
 
 function setLiveStatus(message, newResponse = false) {
   liveStatus.textContent = message;
@@ -65,6 +68,121 @@ const answerLabels = {
   daily_problem: "Day-to-day problem", app_wish: "App they wish existed",
 };
 
+const questionGroups = {
+  owner: [
+    ["owner_1", "Involved in arranging dentist duty?"],
+    ["owner_clinic_size", "Dentists scheduled in a typical week"],
+    ["owner_2", "Uncovered duty slot in the past six months?"],
+    ["owner_3", "How often uncovered duty slots occurred"],
+    ["owner_4", "Most common reason for an open slot"],
+    ["owner_5", "Notice before an open duty slot"],
+    ["owner_6", "First action the clinic took"],
+    ["owner_7", "Dentists contacted for one slot"],
+    ["owner_8", "Usual outcome"],
+    ["owner_9", "Appointments moved or cancelled"],
+    ["owner_10", "Staff time spent finding coverage"],
+  ],
+  receptionist: [
+    ["receptionist_1", "Helps arrange dentist schedules?"],
+    ["receptionist_clinic_size", "Dentists scheduled in a typical week"],
+    ["receptionist_2", "Handled an uncovered slot in the past six months?"],
+    ["receptionist_gap_frequency", "How many uncovered slots were handled"],
+    ["receptionist_3", "How availability was checked"],
+    ["receptionist_4", "Dentists contacted for one slot"],
+    ["receptionist_5", "Time to confirm a dentist"],
+    ["receptionist_6", "Where duty schedules were recorded"],
+    ["receptionist_7", "Appointments moved or cancelled"],
+  ],
+  dentist: [
+    ["dentist_1", "Practices at more than one clinic?"],
+    ["dentist_2", "Asked to cover additional duty?"],
+    ["dentist_3", "Clinics worked with in the past six months"],
+    ["dentist_4", "How often additional duty was offered"],
+    ["dentist_5", "Notice before additional duty"],
+    ["dentist_decline_frequency", "How often additional duty was declined"],
+    ["dentist_6", "Most common reason for declining"],
+    ["dentist_7", "How duty schedules are tracked"],
+    ["dentist_8", "Scheduling conflict between clinics?"],
+  ],
+};
+
+const questionRoles = [
+  ["owner", "Clinic owner / manager"],
+  ["receptionist", "Receptionist / scheduler"],
+  ["dentist", "Dentist"],
+];
+
+function renderQuestionBreakdown() {
+  selectedQuestionRole ||= questionRoles.find(([role]) => roleTotals[role])?.[0] || "owner";
+  const tabs = document.getElementById("question-role-tabs");
+  tabs.replaceChildren();
+  questionRoles.forEach(([role, label]) => {
+    const tab = document.createElement("button");
+    tab.type = "button";
+    tab.className = "question-role-tab";
+    tab.setAttribute("aria-pressed", String(role === selectedQuestionRole));
+    tab.textContent = `${label} · ${roleTotals[role] || 0}`;
+    tab.addEventListener("click", () => {
+      selectedQuestionRole = role;
+      renderQuestionBreakdown();
+    });
+    tabs.append(tab);
+  });
+
+  const note = document.getElementById("question-breakdown-note");
+  const limited = rows.length < totalSubmissions;
+  note.textContent = `Percentages use only people who answered that question; branching changes the total. ${limited ? `Charts use the ${rows.length.toLocaleString()} most recent submissions.` : ""}`.trim();
+
+  const roleRows = rows.filter(row => row.role === selectedQuestionRole);
+  const charts = document.getElementById("question-charts");
+  charts.replaceChildren();
+  questionGroups[selectedQuestionRole].forEach(([key, title]) => {
+    const counts = new Map();
+    roleRows.forEach(row => {
+      const answer = row.answers?.[key];
+      if (typeof answer === "string" && answer.trim()) counts.set(answer, (counts.get(answer) || 0) + 1);
+    });
+    const total = [...counts.values()].reduce((sum, count) => sum + count, 0);
+    const card = document.createElement("article");
+    card.className = "question-card";
+    const header = document.createElement("div");
+    header.className = "question-card-head";
+    const heading = document.createElement("h3");
+    heading.textContent = title;
+    const sample = document.createElement("span");
+    sample.textContent = `${total} ${total === 1 ? "answer" : "answers"}`;
+    header.append(heading, sample);
+    card.append(header);
+    if (total === 0) {
+      const empty = document.createElement("p");
+      empty.className = "empty";
+      empty.textContent = "No answers yet.";
+      card.append(empty);
+    } else {
+      [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).forEach(([answer, count]) => {
+        const percent = Math.round(count / total * 100);
+        const item = document.createElement("div");
+        item.className = "question-answer";
+        const labelRow = document.createElement("div");
+        labelRow.className = "question-answer-label";
+        const label = document.createElement("span");
+        label.textContent = answer;
+        const value = document.createElement("strong");
+        value.textContent = `${count} · ${percent}%`;
+        labelRow.append(label, value);
+        const track = document.createElement("div");
+        track.className = "question-answer-track";
+        const fill = document.createElement("span");
+        fill.style.width = `${percent}%`;
+        track.append(fill);
+        item.append(labelRow, track);
+        card.append(item);
+      });
+    }
+    charts.append(card);
+  });
+}
+
 function renderResponses(responses) {
   const body = document.getElementById("response-rows"); body.replaceChildren();
   if (!responses.length) {
@@ -101,11 +219,14 @@ async function load() {
     document.getElementById("rate").textContent = data.visits ? `${Math.round(data.responses / data.visits * 100)}%` : "0%";
     latestCounts = { visits: data.visits, responses: data.responses };
     const roles = Object.fromEntries(data.roles.map(item => [item.role, item.total]));
+    roleTotals = roles;
+    totalSubmissions = data.responses;
     renderBars("roles", [["Owner / manager", roles.owner || 0], ["Receptionist", roles.receptionist || 0], ["Dentist", roles.dentist || 0]]);
     const daily = Object.fromEntries(data.daily.map(item => [item.day, item.total]));
     const days = Array.from({ length: 7 }, (_, index) => new Date(Date.now() - (6 - index) * 86400000));
     renderBars("daily", days.map(day => [new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Manila", month: "short", day: "numeric" }).format(day), daily[dayKey(day)] || 0]));
     renderResponses(rows);
+    renderQuestionBreakdown();
     return data;
   } catch (error) {
     showError(error.message);

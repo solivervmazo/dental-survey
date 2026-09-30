@@ -18,7 +18,7 @@ The checked-in `site/config.js` contains only the Supabase URL and publishable k
 
 ## Analytics scope
 
-The survey records page views once per browser tab session and submitted answers. Page views are approximate. The local dashboard shows visit and response counts, roles, a seven-day trend, recent responses, and CSV export. It checks for new submissions every 15 seconds and offers opt-in sound alerts while open. Its Reset data control permanently clears visits and responses after a typed confirmation. No patient information should be entered in responses.
+The survey records page views once per browser tab session and submitted answers. Page views are approximate. The local dashboard shows visit and response counts, roles, a seven-day trend, per-question answer charts grouped by role, recent responses, and CSV export. It checks for new submissions every 15 seconds and offers opt-in sound alerts while open. Its Reset data control permanently clears visits and responses after a typed confirmation. No patient information should be entered in responses.
 
 ## Reading the research
 
