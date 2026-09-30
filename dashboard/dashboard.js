@@ -106,6 +106,44 @@ const questionGroups = {
   ],
 };
 
+const yesNo = ["Yes", "No"];
+const clinicSize = ["1", "2–3", "4–6", "7 or more", "Not sure"];
+const gapFrequency = ["Once", "2–3 times", "4–6 times", "More than 6 times", "Not sure"];
+const notice = ["Same day", "1 day", "2–7 days", "More than a week", "It varied"];
+const dentistsContacted = ["0", "1", "2–3", "4–6", "7 or more", "Not sure"];
+const appointmentImpact = ["None", "1–2", "3–5", "6 or more", "Not sure"];
+const questionOptions = {
+  owner_1: yesNo,
+  owner_clinic_size: clinicSize,
+  owner_2: yesNo,
+  owner_3: gapFrequency,
+  owner_4: ["A dentist became unavailable", "More patient bookings than expected", "The clinic added a new duty period", "Another reason", "Not sure"],
+  owner_5: notice,
+  owner_6: ["Contact dentists already working with us", "Ask another clinic or colleague for a referral", "Contact dentists through personal networks", "Move or cancel appointments", "Another action"],
+  owner_7: dentistsContacted,
+  owner_8: ["A dentist was confirmed in time", "A dentist was confirmed, but late", "Appointments were moved or cancelled", "The clinic operated with reduced coverage", "It varied"],
+  owner_9: appointmentImpact,
+  owner_10: ["Under 15 minutes", "15–30 minutes", "31–60 minutes", "More than an hour", "Not sure"],
+  receptionist_1: yesNo,
+  receptionist_clinic_size: clinicSize,
+  receptionist_2: yesNo,
+  receptionist_gap_frequency: gapFrequency,
+  receptionist_3: ["Call or text them individually", "Check a shared schedule", "Ask the owner or manager", "Ask another staff member", "Another way"],
+  receptionist_4: dentistsContacted,
+  receptionist_5: ["Under 15 minutes", "15–30 minutes", "31–60 minutes", "More than an hour", "No one was confirmed", "Not sure"],
+  receptionist_6: ["Paper or whiteboard", "Spreadsheet", "Calendar app", "Clinic software", "Messages or chat", "Another place"],
+  receptionist_7: appointmentImpact,
+  dentist_1: yesNo,
+  dentist_2: yesNo,
+  dentist_3: ["1", "2", "3", "4 or more"],
+  dentist_4: gapFrequency,
+  dentist_5: notice,
+  dentist_decline_frequency: ["Never", "Once", "2–3 times", "4 or more times", "Not sure"],
+  dentist_6: ["I had another clinic duty", "I had a personal commitment", "Travel or location was difficult", "The terms did not work for me", "Another reason"],
+  dentist_7: ["Personal calendar", "Paper notes", "Messages or chat", "A clinic's system", "I do not keep a separate record", "Another way"],
+  dentist_8: ["Yes", "No", "Not sure"],
+};
+
 const questionRoles = [
   ["owner", "Clinic owner / manager"],
   ["receptionist", "Receptionist / scheduler"],
@@ -131,7 +169,7 @@ function renderQuestionBreakdown() {
 
   const note = document.getElementById("question-breakdown-note");
   const limited = rows.length < totalSubmissions;
-  note.textContent = `Percentages use only people who answered that question; branching changes the total. ${limited ? `Charts use the ${rows.length.toLocaleString()} most recent submissions.` : ""}`.trim();
+  note.textContent = `All answer choices are shown, including 0 responses. Percentages use only people who answered that question. ${limited ? `Charts use the ${rows.length.toLocaleString()} most recent submissions.` : ""}`.trim();
 
   const roleRows = rows.filter(row => row.role === selectedQuestionRole);
   const charts = document.getElementById("question-charts");
@@ -156,29 +194,32 @@ function renderQuestionBreakdown() {
     if (total === 0) {
       const empty = document.createElement("p");
       empty.className = "empty";
-      empty.textContent = "No answers yet.";
+      empty.textContent = "No answers yet; available choices are shown below.";
       card.append(empty);
-    } else {
-      [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).forEach(([answer, count]) => {
-        const percent = Math.round(count / total * 100);
-        const item = document.createElement("div");
-        item.className = "question-answer";
-        const labelRow = document.createElement("div");
-        labelRow.className = "question-answer-label";
-        const label = document.createElement("span");
-        label.textContent = answer;
-        const value = document.createElement("strong");
-        value.textContent = `${count} · ${percent}%`;
-        labelRow.append(label, value);
-        const track = document.createElement("div");
-        track.className = "question-answer-track";
-        const fill = document.createElement("span");
-        fill.style.width = `${percent}%`;
-        track.append(fill);
-        item.append(labelRow, track);
-        card.append(item);
-      });
     }
+    const options = questionOptions[key] || [];
+    const olderAnswers = [...counts.keys()].filter(answer => !options.includes(answer)).sort((a, b) => a.localeCompare(b));
+    [...options, ...olderAnswers].forEach(answer => {
+      const count = counts.get(answer) || 0;
+      const percent = total ? Math.round(count / total * 100) : 0;
+      const item = document.createElement("div");
+      item.className = "question-answer";
+      item.classList.toggle("zero", count === 0);
+      const labelRow = document.createElement("div");
+      labelRow.className = "question-answer-label";
+      const label = document.createElement("span");
+      label.textContent = answer;
+      const value = document.createElement("strong");
+      value.textContent = `${count} · ${percent}%`;
+      labelRow.append(label, value);
+      const track = document.createElement("div");
+      track.className = "question-answer-track";
+      const fill = document.createElement("span");
+      fill.style.width = `${percent}%`;
+      track.append(fill);
+      item.append(labelRow, track);
+      card.append(item);
+    });
     charts.append(card);
   });
 }
