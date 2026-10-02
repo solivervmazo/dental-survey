@@ -13,7 +13,6 @@ const tagalog = {
   "Link copied": "Nakopya ang link",
   "Could not copy the link. Please select and copy it manually.": "Hindi nakopya ang link. Piliin at kopyahin ito nang mano-mano.",
   "Scan to open the questionnaire": "I-scan upang buksan ang talatanungan",
-  "Independent research by Soliver V. Mazo": "Malayang pananaliksik ni Soliver V. Mazo",
   "Questions are about work practices, not patient care.": "Tungkol sa paraan ng trabaho ang mga tanong, hindi sa pangangalaga ng pasyente.",
   "Interested in a custom application? Contact me at": "Interesado sa isang custom na app? Makipag-ugnayan sa akin sa",
   "START HERE": "MAGSIMULA DITO",

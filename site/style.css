@@ -16,3 +16,6 @@
 .site-shell{display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}.layout{width:100%;flex:1;align-content:start}.site-footer{width:100%;margin-top:auto}
 .privacy-note{max-width:470px;padding:18px 19px;border-left:3px solid var(--teal);border-radius:0 10px 10px 0;background:var(--pale);color:#315967;font-size:1rem;line-height:1.65}
 .survey-intro .privacy-note{width:100%;max-width:none}.survey-intro .actions{justify-content:center}.survey-intro .actions .btn-primary{min-width:210px;min-height:56px;margin:0 auto;padding:14px 28px;font-size:1.05rem}
+
+.footer-brand{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;color:var(--navy);font-family:Manrope,Arial,sans-serif;font-size:22px;line-height:1}.footer-brand img{display:block;flex:none;width:1em;height:1em}.footer-brand strong{font-weight:800}
+@media(max-width:540px){.footer-brand{margin-bottom:8px}}
