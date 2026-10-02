@@ -1,54 +1,106 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#102c47" />
-    <meta name="description" content="A short research questionnaire about how dental clinics arrange dentist duty." />
-    <link rel="canonical" href="https://solivervmazo.github.io/dental-survey/" />
+    <meta
+      name="description"
+      content="A short research questionnaire about how dental clinics arrange dentist duty."
+    />
+    <link
+      rel="canonical"
+      href="https://solivervmazo.github.io/dental-survey/"
+    />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://solivervmazo.github.io/dental-survey/" />
+    <meta
+      property="og:url"
+      content="https://solivervmazo.github.io/dental-survey/"
+    />
     <meta property="og:title" content="Dental Clinic Duty Research" />
-    <meta property="og:description" content="A short questionnaire for clinic owners, receptionists, and dentists about how dentist duty is arranged." />
-    <meta property="og:image" content="https://solivervmazo.github.io/dental-survey/assets/social-preview.png" />
+    <meta
+      property="og:description"
+      content="A short questionnaire for clinic owners, receptionists, and dentists about how dentist duty is arranged."
+    />
+    <meta
+      property="og:image"
+      content="https://solivervmazo.github.io/dental-survey/assets/social-preview.png"
+    />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Dental clinic duty research questionnaire by Soliver V. Mazo" />
+    <meta
+      property="og:image:alt"
+      content="Dental clinic duty research questionnaire by Soliver V. Mazo"
+    />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Dental Clinic Duty Research" />
-    <meta name="twitter:description" content="A short questionnaire for clinic owners, receptionists, and dentists." />
-    <meta name="twitter:image" content="https://solivervmazo.github.io/dental-survey/assets/social-preview.png" />
+    <meta
+      name="twitter:description"
+      content="A short questionnaire for clinic owners, receptionists, and dentists."
+    />
+    <meta
+      name="twitter:image"
+      content="https://solivervmazo.github.io/dental-survey/assets/social-preview.png"
+    />
     <title>Dental Clinic Scheduling Research</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23102c47'/%3E%3Cpath d='M19 20h26v7H19zm0 13h18v7H19zm0 13h26v3H19z' fill='%23bde9e1'/%3E%3C/svg%3E" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23102c47'/%3E%3Cpath d='M19 20h26v7H19zm0 13h18v7H19zm0 13h26v3H19z' fill='%23bde9e1'/%3E%3C/svg%3E"
+    />
     <link rel="stylesheet" href="./style.css" />
     <script type="module" src="./app.js"></script>
   </head>
   <body>
     <div class="site-shell">
       <header class="site-header">
-        <div class="brand"><span class="brand-mark" aria-hidden="true">S</span><span>Soliver V. Mazo <small data-i18n>Research study</small></span></div>
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">S</span
+          ><span>SoliverLabs<small data-i18n>Research study</small></span>
+        </div>
       </header>
 
       <main class="layout">
         <aside class="intro">
           <p class="eyebrow" data-i18n>MARKET RESEARCH · PHILIPPINES</p>
           <h1 data-i18n>How do dental clinics arrange dentist duty?</h1>
-          <p data-i18n>Hello, I’m Soliver V. Mazo, a tech startup founder. I’m researching how dental clinics and dentists arrange duty schedules.</p>
-          <p data-i18n>This short survey asks about the past six months. There are no right or wrong answers. Please do not include patient information.</p>
-          <div class="study-note"><span class="note-icon" aria-hidden="true">i</span><span data-i18n>Your answers show how often scheduling gaps happen and how clinics handle them.</span></div>
+          <p data-i18n>
+            Hello, I’m Soliver V. Mazo, a tech startup founder. I’m researching
+            how dental clinics and dentists arrange duty schedules.
+          </p>
+          <p data-i18n>
+            This short survey asks about the past six months. There are no right
+            or wrong answers. Please do not include patient information.
+          </p>
+          <div class="study-note">
+            <span class="note-icon" aria-hidden="true">i</span
+            ><span data-i18n
+              >Your answers show how often scheduling gaps happen and how
+              clinics handle them.</span
+            >
+          </div>
         </aside>
 
         <div class="survey-column">
           <section class="survey-card" aria-label="Questionnaire">
-            <div class="card-top"><span id="step-label" class="step-label">START HERE</span><span id="progress-label" class="progress-label">About 3 minutes</span></div>
-            <div class="progress-track" aria-hidden="true"><div id="progress-fill"></div></div>
+            <div class="card-top">
+              <span id="step-label" class="step-label">START HERE</span
+              ><span id="progress-label" class="progress-label"
+                >About 3 minutes</span
+              >
+            </div>
+            <div class="progress-track" aria-hidden="true">
+              <div id="progress-fill"></div>
+            </div>
             <div id="survey-content" aria-live="polite"></div>
             <p id="survey-error" class="error" role="alert" hidden></p>
             <div id="survey-actions" class="actions"></div>
           </section>
           <div class="survey-under-card">
-            <a id="restart-survey" class="restart-link" href="./" data-i18n>Restart</a>
+            <a id="restart-survey" class="restart-link" href="./" data-i18n
+              >Restart</a
+            >
             <div id="language-slot"></div>
           </div>
         </div>
@@ -57,15 +109,47 @@
           <div class="share-message">
             <p class="eyebrow" data-i18n>SHARE THIS STUDY</p>
             <h2 id="share-heading" data-i18n>Know another doctor or clinic?</h2>
-            <p data-i18n>Please share this questionnaire with them. More perspectives will help us understand dentist duty across clinics.</p>
-            <div class="share-link-row"><span id="share-url" class="share-url"></span><button id="copy-link" class="copy-button" type="button" data-i18n>Copy link</button></div>
+            <p data-i18n>
+              Please share this questionnaire with them. More perspectives will
+              help us understand dentist duty across clinics.
+            </p>
+            <div class="share-link-row">
+              <span id="share-url" class="share-url"></span
+              ><button
+                id="copy-link"
+                class="copy-button"
+                type="button"
+                data-i18n
+              >
+                Copy link
+              </button>
+            </div>
             <p id="copy-status" class="copy-status" role="status"></p>
           </div>
-          <div class="qr-wrap"><div id="home-qr" class="qr-code" role="img" aria-label="QR code for this questionnaire"></div><span data-i18n>Scan to open the questionnaire</span></div>
+          <div class="qr-wrap">
+            <div
+              id="home-qr"
+              class="qr-code"
+              role="img"
+              aria-label="QR code for this questionnaire"
+            ></div>
+            <span data-i18n>Scan to open the questionnaire</span>
+          </div>
         </section>
       </main>
 
-      <footer class="site-footer"><div class="footer-brand"><img src="./assets/soliverlabs-mark.svg" width="22" height="22" alt="" /><strong>SoliverLabs</strong></div><span data-i18n>Questions are about work practices, not patient care.</span><span><span data-i18n>Interested in a custom application? Contact me at</span> <a href="mailto:solivervmazo.jobs@gmail.com">solivervmazo.jobs@gmail.com</a></span></footer>
+      <footer class="site-footer">
+        <span data-i18n
+          >Questions are about work practices, not patient care.</span
+        ><span
+          ><span data-i18n
+            >Interested in a custom application? Contact me at</span
+          >
+          <a href="mailto:founder@solivermazotech.com"
+            >founder@solivermazotech.com</a
+          ></span
+        >
+      </footer>
     </div>
   </body>
 </html>
