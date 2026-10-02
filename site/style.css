@@ -55,6 +55,26 @@ input:focus-visible {
   font-weight: 800;
   line-height: 1.1;
 }
+.brand-name,
+.brand-link {
+  background: linear-gradient(135deg, #1c3150, #101d33);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.brand-link {
+  text-decoration: none;
+  font-weight: 700;
+}
+.brand-link:visited {
+  color: transparent;
+}
+.brand-link:hover,
+.brand-link:focus-visible {
+  text-decoration: underline;
+  text-decoration-color: #1c3150;
+  text-underline-offset: 2px;
+}
 .brand small {
   display: block;
   margin-top: 4px;
