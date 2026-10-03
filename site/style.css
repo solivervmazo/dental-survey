@@ -55,9 +55,15 @@ input:focus-visible {
   font-weight: 800;
   line-height: 1.1;
 }
-.brand-name,
-.brand-link {
+.brand-name {
   background: linear-gradient(135deg, #1c3150, #101d33);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.brand-link,
+.soliverlabs-name {
+  background: linear-gradient(105deg, #036795 0%, #4f46e5 58%, #7e22ce 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -72,7 +78,7 @@ input:focus-visible {
 .brand-link:hover,
 .brand-link:focus-visible {
   text-decoration: underline;
-  text-decoration-color: #1c3150;
+  text-decoration-color: #4f46e5;
   text-underline-offset: 2px;
 }
 .brand small {
@@ -163,6 +169,84 @@ h1 {
   font-family: Georgia, serif;
   font-style: italic;
   font-weight: bold;
+}
+.intro-social {
+  max-width: 540px;
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+.intro-powered {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--navy);
+  font-family: Manrope, Arial, sans-serif;
+  font-size: 0.83rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.intro-brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 4px 9px 4px 5px;
+  border: 1px solid rgba(79, 70, 229, 0.16);
+  border-radius: 9px;
+  color: var(--navy);
+  background: linear-gradient(110deg, rgba(14, 165, 233, 0.08), rgba(99, 102, 241, 0.1), rgba(192, 132, 252, 0.09));
+  text-decoration: none;
+}
+.intro-brand-link:hover,
+.intro-brand-link:focus-visible {
+  border-color: rgba(79, 70, 229, 0.32);
+  background: linear-gradient(110deg, rgba(14, 165, 233, 0.13), rgba(99, 102, 241, 0.16), rgba(192, 132, 252, 0.14));
+}
+.intro-brand-link:focus-visible {
+  outline: 3px solid #8cbdff;
+  outline-offset: 3px;
+}
+.intro-powered svg {
+  display: block;
+  flex: none;
+  border-radius: 7px;
+}
+.facebook-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 15px 8px 11px;
+  border: 1px solid #1877f2;
+  border-radius: 8px;
+  color: var(--white);
+  background: #1877f2;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 3px 8px rgba(24, 119, 242, 0.18);
+}
+.facebook-icon {
+  display: block;
+  flex: none;
+  width: 20px;
+  height: 20px;
+}
+.facebook-button:hover,
+.facebook-button:focus-visible {
+  color: var(--white);
+  background: #0866d3;
+  border-color: #0866d3;
+}
+.facebook-button:focus-visible {
+  outline: 3px solid #8cbdff;
+  outline-offset: 3px;
 }
 .survey-card {
   min-height: 510px;
@@ -343,6 +427,12 @@ h1 {
 @media (max-width: 540px) {
   .site-header {
     padding: 18px 20px;
+  }
+  .intro-social {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
   .header-note {
     display: none;

@@ -6,6 +6,7 @@ const tagalog = {
   "Hello, I’m Soliver V. Mazo, a tech startup founder. I’m researching how dental clinics and dentists arrange duty schedules.": "Kumusta, ako si Soliver V. Mazo, isang tagapagtatag ng tech startup. Inaalam ko kung paano inaayos ng mga klinikang dental at dentista ang kanilang mga iskedyul ng duty.",
   "This short survey asks about the past six months. There are no right or wrong answers. Please do not include patient information.": "Tungkol sa nakaraang anim na buwan ang maikling survey na ito. Walang tama o maling sagot. Huwag maglagay ng impormasyon ng pasyente.",
   "Your answers show how often scheduling gaps happen and how clinics handle them.": "Makikita sa inyong mga sagot kung gaano kadalas nagkakaroon ng bakanteng duty at paano ito inaayos ng mga klinika.",
+  "Follow us on Facebook": "Sundan kami sa Facebook",
   "SHARE THIS STUDY": "IBAHAGI ANG PAG-AARAL",
   "Know another doctor or clinic?": "May kilala ka bang ibang dentista o klinika?",
   "Please share this questionnaire with them. More perspectives will help us understand dentist duty across clinics.": "Pakibahagi sa kanila ang talatanungang ito. Makakatulong ang mas maraming pananaw upang maunawaan ang duty ng dentista sa iba't ibang klinika.",

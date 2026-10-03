@@ -6,7 +6,7 @@ import { loadEnv, projectRoot } from "./env.mjs";
 
 const { connectionString } = await loadEnv();
 const pool = connectionString ? new pg.Pool({ connectionString, max: 3, connectionTimeoutMillis: 10000 }) : null;
-const mime = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8", ".txt": "text/plain; charset=utf-8" };
+const mime = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8", ".svg": "image/svg+xml", ".txt": "text/plain; charset=utf-8" };
 const allowedOrigins = new Set(["http://localhost:4173", "http://127.0.0.1:4173"]);
 
 function json(response, code, body) {
